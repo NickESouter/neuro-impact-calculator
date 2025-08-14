@@ -4,25 +4,32 @@ This document can be used to collate resources that will inform tool creation.
 
 As a starting point, the following papers provide some discussion of why it's important to pay attention to the carbon foopring of MRI scanning and neuroscience research:
 
-* [Jackson (2023)] [1]
-* [McKee et al. (2024)] [2]
-* [Rae et al. (2022)][3]
-* [Aron et al. (2020][4]
+* [Jackson (2023)][1] - Sustainable imaging in the era of the climate emergency: a personal view
+* [McKee et al. (2024)][2] - Planetary health and radiology: Why we should care and what we can do
+* [Rae et al. (2022)][3] - Climate crisis and ecological emergency: Why they concern (neuro)scientists, and what we can do
+* [Aron et al. (2020][4] - How can neuroscientists respond to the climate emergency?
+* [Souter et al. (2023)][5] - Ten recommendations for reducing the carbon footprint of research computing in human neuroimaging
 
 On a practical note, the following papers can be used to estimate the energy usage of MRI scanning:
 
-* [Woolen et al. (2023)][5]
-* [Chodorowski et al. (2024)][6]
-* [Alerte et al. (2025)][7]
+* [Woolen et al. (2023)][6] - Ecodesign and operational strategies to reduce the carbon footprint of MRI for energy cost savings
+* [Chodorowski et al. (2024)][7] - Energy consumption in MRI: Determinants and management options
+* [Alerte et al. (2025)][8] - Towards sustainable magnetic resonance neuro imaging: Pathways for energy optimization and cost reduction strategies
 
 And these papers can be used to estimate the energy usage of fMRI data processing and storage:
 
+* [Souter et al. (2024)][9] - Measuring and reducing the carbon footprint of fMRI preprocessing in fMRIPrep
+* [Souter et al. (2025)][10] - Comparing the carbon footprint of fMRI data processing and analysis approaches
 
 [1]: https://www.sciencedirect.com/science/article/pii/S0009926023003707?via%3Dihub
 [2]: https://pubs.rsna.org/doi/10.1148/radiol.240219
 [3]: https://doi.org/10.1177/23982128221075430
 [4]: https://doi.org/10.1016/j.neuron.2020.02.019
+[5]: https://direct.mit.edu/imag/article/doi/10.1162/imag_a_00043/118246/Ten-recommendations-for-reducing-the-carbon
 
-[5]: https://pubs.rsna.org/doi/10.1148/radiol.230441
-[6]: https://www.sciencedirect.com/science/article/pii/S0150986123002705?via%3Dihub
-[7]: https://www.mdpi.com/2076-3417/15/3/1305
+[6]: https://pubs.rsna.org/doi/10.1148/radiol.230441
+[7]: https://www.sciencedirect.com/science/article/pii/S0150986123002705?via%3Dihub
+[8]: https://www.mdpi.com/2076-3417/15/3/1305
+
+[9]: https://onlinelibrary.wiley.com/doi/10.1002/hbm.70003
+[10]: https://direct.mit.edu/imag/article/doi/10.1162/IMAG.a.36/131017/Comparing-the-carbon-footprint-of-fMRI-data
