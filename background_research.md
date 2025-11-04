@@ -7,7 +7,7 @@ As a starting point, the following papers provide some discussion of why it's im
 * [Jackson (2023)][1] - Sustainable imaging in the era of the climate emergency: a personal view
 * [McKee et al. (2024)][2] - Planetary health and radiology: Why we should care and what we can do
 * [Rae et al. (2022)][3] - Climate crisis and ecological emergency: Why they concern (neuro)scientists, and what we can do
-* [Aron et al. (2020][4] - How can neuroscientists respond to the climate emergency?
+* [Aron et al. (2020)][4] - How can neuroscientists respond to the climate emergency?
 * [Souter et al. (2023)][5] - Ten recommendations for reducing the carbon footprint of research computing in human neuroimaging
 
 On a practical note, the following papers can be used to estimate the energy usage of MRI scanning:
