@@ -43,4 +43,10 @@ That said, this file contains the following columns:
 
 ## Chodorowski_energy.csv
 
+Chodorowski et al. (2024) [https://doi.org/10.1016/j.neurad.2023.12.001] provides a useful resource with which to estimate energy usage of MRI scanning. For scanning on a a 3T Philips MR7700 scanner, this paper provides (a) duration of scanning and (b) energy usage (kWh) per scan for both and fMRI EPI sequence and several variants of DWI sequences. From this, hourly energy usage of MRI scanning can be inferred. This may therefore be an ideal resource with which to estimate the energy usage of MRI scanning, although it lacks comparable data for structural scanning (T1/T2). This file contains the following columns:
 
+* **sequence** - The scanning sequence for which energy usage was measured.
+* **duration_seconds** - The duration of the respective scan, in seconds as provided in the paper
+* **duration_hours** - This same duration metric converted to hours
+* **kWh** - The energy usage in kWh of the respective scanning sequence
+* **kWh_per_hour** - The equivilant energy usage value for an hour of scanning.
