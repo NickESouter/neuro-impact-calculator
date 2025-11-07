@@ -28,3 +28,19 @@ Source: Ember (2025), Energy Institute - Statistical Review of World Energy (202
 It was edited such that carbon intensity factors for entities larger than countries (e.g., Asia, Africa, the EU) were removed.
 
 This data allows for country-specific carbon footprint estimates, whereby energy usage in kWh can be multiplied by the respective conversion factor.
+
+### MRI_energy.csv
+
+This file contains hourly energy usage (kWh) metrics for MRI scanning, as taken from multiple papers. The aim of this resource was to allow for flexible estimations of energy usage based on the specific scanner in use, in light of data provided across studies. Note, however, that this resource is largely incomplete. Papers discussing the energy usage of MRI rarely provide sufficient data, including (a) duraiton of MRI scanning and (b) energy usage for a given scan (kWh). Additionally, several of the papers listed here are not open access, meaning metrics cannot be extracted. Ultimately, it may be wise to disregard this file and instead use the csv file discussed below.
+
+That said, this file contains the following columns:
+
+* **hourly_kwh** - kWh needed for active MRI scanning per hour
+* **paper** - Name of the paper from which this metric has been taken
+* **url** - DOI links for each paper referenced
+* **scanner** - The specific MRI scanner used to derive the metric
+* **notes** - Context on how the estimated was derived from the respective paper, or comments on why this metric could not be accessed.
+
+## Chodorowski_energy.csv
+
+
