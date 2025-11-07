@@ -31,11 +31,11 @@ This data allows for country-specific carbon footprint estimates, whereby energy
 
 ### MRI_energy.csv
 
-This file contains hourly energy usage (kWh) metrics for MRI scanning, as taken from multiple papers. The aim of this resource was to allow for flexible estimations of energy usage based on the specific scanner in use, in light of data provided across studies. Note, however, that this resource is largely incomplete. Papers discussing the energy usage of MRI rarely provide sufficient data, including (a) duraiton of MRI scanning and (b) energy usage for a given scan (kWh). Additionally, several of the papers listed here are not open access, meaning metrics cannot be extracted. Ultimately, it may be wise to disregard this file and instead use the csv file discussed below.
+This file contains energy usage (kWh) per minute metrics for MRI scanning, as taken from multiple papers. The aim of this resource was to allow for flexible estimations of energy usage based on the specific scanner in use, in light of data provided across studies. Note, however, that this resource is largely incomplete. Papers discussing the energy usage of MRI rarely provide sufficient data, including (a) duraiton of MRI scanning and (b) energy usage for a given scan (kWh). Additionally, several of the papers listed here are not open access, meaning metrics cannot be extracted. Ultimately, it may be wise to disregard this file and instead use the csv file discussed below.
 
 That said, this file contains the following columns:
 
-* **hourly_kwh** - kWh needed for active MRI scanning per hour
+* **kWh_per_minute** - kWh needed for active MRI scanning per minute
 * **paper** - Name of the paper from which this metric has been taken
 * **url** - DOI links for each paper referenced
 * **scanner** - The specific MRI scanner used to derive the metric
@@ -47,6 +47,19 @@ Chodorowski et al. (2024) [https://doi.org/10.1016/j.neurad.2023.12.001] provide
 
 * **sequence** - The scanning sequence for which energy usage was measured.
 * **duration_seconds** - The duration of the respective scan, in seconds as provided in the paper
-* **duration_hours** - This same duration metric converted to hours
+* **duration_minutes** - This same duration metric converted to minutes
 * **kWh** - The energy usage in kWh of the respective scanning sequence
-* **kWh_per_hour** - The equivilant energy usage value for an hour of scanning.
+* **kWh_per_minute** - The equivilant energy usage value for a minute of scanning
+
+### Souter_energy.csv
+
+Souter et al. (2025) [https://doi.org/10.1162/IMAG.a.36] estimated the energy usage of fMRI data processing in software pipelines FSL, SPM, and fMRIPrep. This file contains data from this paper, including:
+
+* **software** - The software for which the estimate is provided
+* **stage** - Either preprocessing or analysis
+* **duration_seconds** - The duration of computing in seconds
+* **duration_minutes** - The same duration metric converted to minutes
+* **kWh** - The energy needed for this computing
+* **kWh_per_minute** - The equivilant energy usage value for a minute of computing
+
+While this provides a good starting point, it would be preferable to be able to use an existing carbon tracking tool, like the Green Algorithms calculator [https://calculator.green-algorithms.org/], which provides flexibility on things like the specific processor used, and the power use effectiveness of the data centre. The benchmark data provided by Souter al. (2025) assumes the use of an Intel® Xeon® Processor E5-2640 v3, and a power use effectiveness value of 1.28. The data processed for this paper was approximatley 6 minutes of task fMRI data, at 2mm resolution.
