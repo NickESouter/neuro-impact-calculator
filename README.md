@@ -21,7 +21,7 @@ This file contains carbon intensity conversion factors for countries and oversea
 * **Year** - The year for which carbon intensity is reported
 * **Carbon intensity of electricity - gCO2/kWh** - Carbon intensity conversion factor
 
-This data was accessed via Our World in Data:
+This data was accessed via Our World in Data [https://ourworldindata.org/grapher/carbon-intensity-electricity]:
 
 Source: Ember (2025), Energy Institute - Statistical Review of World Energy (2025) – with major processing by Our World In Data.
 
