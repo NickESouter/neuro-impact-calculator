@@ -59,3 +59,31 @@ def storage_consumption(scan_time = 60, years_storage = 5, redundancy = 3):
   kwh = 0.0537 * volume_estimated * years_storage * redundancy
   #converting the estimation of 50kWh/TB/Year to GiB
   return kwh
+
+def computing_consumption(cpu_hours, ram_gb, gpu_hours=0, pue_hpc = 1.56):
+  """
+  Calculates the energy consumption of computing resources.
+
+  This function estimates the energy consumption based on CPU hours, RAM usage,
+  optional GPU hours, and a Power Usage Effectiveness (PUE) for High-Performance Computing (HPC).
+
+  Args:
+    cpu_hours (float): Number of CPU hours used.
+    ram_gb (float): Amount of RAM used in gigabytes.
+    gpu_hours (float, optional): Number of GPU hours used. Defaults to 0.
+    pue_hpc (float, optional): Power Usage Effectiveness for HPC data centers.
+                               Defaults to 1.56 (from Uptime Institute survey).
+
+  Returns:
+    float: Total estimated energy consumption in kilowatt-hours (kWh).
+  """
+  # Constants
+  w_core = 12.0 #validate value later one
+  w_ram_gb = 0.3725 #same constant used by Lannelongue, Loïc, Jason Grealey, and Michael Inouye. "Green algorithms: quantifying the carbon footprint of computation." Advanced science 8.12 (2021): 2100707.
+  w_gpu = 500.0 # estimative based on the current and new gpus
+
+  e_cpu = (cpu_hours * w_core) / 1000
+  e_ram = (cpu_hours * ram_gb * w_ram_gb) / 1000
+  e_gpu = (gpu_hours * w_gpu) / 1000
+  kwh = (e_cpu + e_ram + e_gpu) * pue_hpc ## Value from pue_hpc comming from  Uptime Institute 14th annual global data center survey (retrieved DataCenter Knowledge (news platform))
+  return kwh
