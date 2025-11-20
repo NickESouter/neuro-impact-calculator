@@ -57,4 +57,5 @@ def storage_consumption(scan_time = 60, years_storage = 5, redundancy = 3):
   """
   volume_estimated = (scan_time / 60) * 5
   kwh = 0.0537 * volume_estimated * years_storage * redundancy
+  #converting the estimation of 50kWh/TB/Year to GiB
   return kwh
