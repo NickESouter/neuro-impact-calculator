@@ -17,7 +17,8 @@ class acquisition():
         df_carbon = pd.read_csv("data/carbon-intensity.csv")
         df_energy = pd.read_csv("data/Chodorowski_energy.csv")
 
-        carbon_intensity = df_carbon[df_carbon["Entity"] == country][df_carbon["Year"] == year]["Carbon intensity of electricity - gCO2/kWh"]
+        mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year)
+        carbon_intensity = df_carbon.loc[mask, "Carbon intensity of electricity - gCO2/kWh"]
         
         kWh_per_minute   = df_energy[df_energy["sequence"] == entity]["kWh_per_minute"]
         consumption = float(self.duration) * kWh_per_minute.iloc[0] * carbon_intensity.iloc[0]
