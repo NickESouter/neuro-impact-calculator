@@ -38,3 +38,23 @@ def cooling_consumption(mri_consumption, scan_time = 60):
 
 
   return e_cool
+
+def storage_consumption(scan_time=60, years_storage =5, redundancy = 3):
+  """
+  Calculates the energy consumption associated with data storage for MRI scans.
+
+  This function estimates storage consumption based on estimated data volume,
+  a given energy density for storage, years of storage, and a redundancy factor.
+
+  Args:
+    scan_time (int, optional): The duration of the MRI scan in minutes. Defaults to 60.
+    years_storage (int, optional): The number of years the data will be stored. Defaults to 5.
+    redundancy (int, optional): The redundancy factor for data storage (e.g., for backups).
+                                Defaults to 3.
+
+  Returns:
+    float: The estimated energy consumption for data storage in kilowatt-hours (kWh).
+  """
+  volume_estimated = (scan_time/60)*5
+  kwh = 0.0537 * volume_estimated * years_storage * redundancy
+  return kwh
