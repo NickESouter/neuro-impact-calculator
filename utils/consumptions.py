@@ -1,4 +1,4 @@
-def mri_consumption(kw_idle, kw_scan, scan_time =60, idle_time = 60):
+def mri_consumption(kw_idle, kw_scan, scan_time =60, idle_time = 15):
   """
   Calculates the energy consumption of an MRI scanner.
 
