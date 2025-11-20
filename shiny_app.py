@@ -6,40 +6,80 @@ import pandas as pd
 
 
 
-def get_choices(file_name, category):
-    df_choices = pd.read_csv(file_name)
-    return df_choices[category].unique().tolist()
+countryCarbonIntensity_filename = "data/carbon-intensity.csv"
+scannerData_filename = "data/Scanner Power - Sheet3.csv"
+
+
+def get_choices(file_name, category, other=False):
+    if file_name == scannerData_filename and category == "model_full":
+        df_choices = load_scanner_data(scannerData_filename=scannerData_filename)
+    else:
+        df_choices = pd.read_csv(file_name)
+    choice_list = df_choices[category].unique().tolist()
+    if other:
+        choice_list.append("Other")
+    return choice_list
+
+
+def load_scanner_data(scannerData_filename=scannerData_filename):
+    df_models = pd.read_csv(scannerData_filename)
+    df_models['model_full'] = df_models['Manufacturer'] + ", " + df_models['Model']
+    df_models.sort_values(by=['model_full'], inplace=True)
+
+    # Make sure field strength is a float
+    df_models['Field strength'] = df_models['Field strength'].astype(float)
+
+    return df_models
+
+
+def get_consumption(modality, model, field_strength, duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename):
+
+    # Country specific data
+    df_carbon = pd.read_csv(countryCarbonIntensity_filename)
+    mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year)
+
+    if not mask.any():
+        raise ValueError(f"No carbon intensity data for {country} in {year}") 
+    
+    else:
+        carbon_intensity = df_carbon.loc[mask, "Carbon intensity of electricity - gCO2/kWh"].iloc[0] # TODO: check that
+
+        # Scanner specific data
+        df_energy = load_scanner_data(scannerData_filename=scannerData_filename)
+
+        # IF MODEL IS PART OF OUR LIST
+        if model in df_energy["model_full"].values:
+            scan_energy = df_energy.loc[df_energy["model_full"] == model, "scan_mode"].iloc[0] # TODO: check here too
+        
+        # IF NOT, USE THE AVERAGE BASED ON OUR DATABASE (by field strength)
+        elif model == "Other":
+            matching = df_energy.loc[df_energy["Field strength"] == field_strength, "scan_mode"].dropna()
+            if matching.empty:
+                raise ValueError(f"No scan_mode entries for field strength {field_strength}")
+            scan_energy = matching.mean()
+
+        return duration * scan_energy * carbon_intensity
 
 
 # Server function provides access to client-side input values
 def server(input):
     @render.text  
-    def consumption(modality = input.modality, entity = input.entity, duration = input.minutes, country = input.country, year = input.year):
-
+    def consumption(scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename, modality = input.modality, model = input.model, manufacturer = input.manufacturer, field_strength = input.field_strength, duration = input.minutes, country = input.country, year = input.year):
+        # Read inputs from Shiny input objects
         modality = modality.get()
-        entity = entity.get()
-        duration = duration.get()
+        model = model.get()
+        field_strength = float(field_strength.get())
+        duration = float(duration.get())
         country = country.get()
-        year= year.get()
+        year = year.get()
 
-        df_carbon = pd.read_csv("data/carbon-intensity.csv")
-        df_energy = pd.read_csv("data/Chodorowski_energy.csv")
-
-        mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year)
-        carbon_intensity = df_carbon.loc[mask, "Carbon intensity of electricity - gCO2/kWh"]
-
-        kWh_per_minute   = df_energy[df_energy["sequence"] == entity]["kWh_per_minute"]
-        consumption = float(duration) * kWh_per_minute.iloc[0] * carbon_intensity.iloc[0]
-
-        return consumption 
+        try:
+            return get_consumption(modality, model, field_strength, duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename)
+        except Exception as e:
+            # Return an informative error string to the UI instead of raising
+            return f"Error calculating consumption: {e}"
  
- 
-
 if __name__ == "__main__":
-
-    countryCarbonIntensity_filename = "data/carbon-intensity.csv"
-    entityEnergy_filename = "data/Chodorowski_energy.csv"
-    modelsData_filename = "data/Scanner Power - Sheet3.csv"
 
     # User interface (UI) definition
     app_ui = ui.page_fluid(
@@ -55,11 +95,16 @@ if __name__ == "__main__":
     ),
 
     ui.input_select(
-        "entity", "Machine", choices=get_choices("data/Chodorowski_energy.csv", "sequence")
+        "modality", "Modality", choices=["MRI"]
     ),
 
     ui.input_select(
-        "modality", "Modality", choices=["MRI"]
+        "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
+    ),
+
+    
+    ui.input_select(
+        "model", "Model", choices=get_choices(scannerData_filename, "model_full", other=True)
     ),
 
     ui.output_text_verbatim("consumption"), 
