@@ -4,37 +4,17 @@ from datetime import date
 from shiny import App, render, ui
 import pandas as pd
 
-# User interface (UI) definition
-app_ui = ui.page_fluid(
 
-    ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
 
-    ui.input_numeric("minutes", "Minutes of active scanning", 45), 
-    
-    ui.input_numeric("year", "Year of the scanning", date.today().year), 
-
-    ui.input_select(
-        "country", "Country", choices=["Spain", "Ecolandia", "Petrolandia"]
-    ),
-
-    ui.input_select(
-        "entity", "Machine", choices=["SE DWIMVb1000s/mm2 2.0mm", "Magnito", "GravityGuy"] 
-    ),
-
-    ui.input_select(
-        "modality", "Modality", choices=["MRI"]
-    ),
-
-    ui.output_text_verbatim("consumption"), 
-
-    )
+def get_choices(file_name, category):
+    df_choices = pd.read_csv(file_name)
+    return df_choices[category].unique().tolist()
 
 
 # Server function provides access to client-side input values
 def server(input):
     @render.text  
     def consumption(modality = input.modality, entity = input.entity, duration = input.minutes, country = input.country, year = input.year):
-
 
         modality = modality.get()
         entity = entity.get()
@@ -54,8 +34,39 @@ def server(input):
         return consumption 
  
  
-app = App(app_ui, server)
 
 if __name__ == "__main__":
+
+    countryCarbonIntensity_filename = "data/carbon-intensity.csv"
+    entityEnergy_filename = "data/Chodorowski_energy.csv"
+    modelsData_filename = "data/Scanner Power - Sheet3.csv"
+
+    # User interface (UI) definition
+    app_ui = ui.page_fluid(
+
+    ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
+
+    ui.input_numeric("minutes", "Minutes of active scanning", 45), 
+    
+    ui.input_numeric("year", "Year of the scanning", date.today().year), 
+
+    ui.input_select(
+        "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
+    ),
+
+    ui.input_select(
+        "entity", "Machine", choices=get_choices("data/Chodorowski_energy.csv", "sequence")
+    ),
+
+    ui.input_select(
+        "modality", "Modality", choices=["MRI"]
+    ),
+
+    ui.output_text_verbatim("consumption"), 
+
+    )
+
+    app = App(app_ui, server)
+
     app.run()
 
