@@ -47,7 +47,8 @@ def convert_g2kg(grams):
 
 def get_statement(summary):
     text = (
-        f"For the current study, {summary['scan_power']:.2f} kWh was used for MRI scanning, "
+        f"For the current study, {summary['scan_power']:.2f} kWh was used for MRI scanning for a duration of active scanning of {summary['scan_duration']} minutes "
+        f"and an additional {summary['idle_power']:.2f} kWh for idle scanning for a duration of {summary['idle_duration']} minutes, "
         f"and {summary['computing_energy']:.2f} kWh for data processing and analysis. "
         f"In {summary['country']}, with a carbon intensity value of {summary['carbon_intensity']:.2f} grams of carbon dioxide per kWh (gCO2/kWh), "
         f"this amounted to {convert_g2kg(summary['carbon_emissions']):.2f} kilograms of carbon dioxide-equivalent emissions. "
@@ -56,8 +57,10 @@ def get_statement(summary):
     )
     return text
 
-def compute_scan(modality, model, field_strength, scan_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename):
+def compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename):
     
+    print("are we hereeeee???")
+
     # Country specific data
     df_carbon = pd.read_csv(countryCarbonIntensity_filename)
     mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year)
@@ -91,8 +94,7 @@ def compute_scan(modality, model, field_strength, scan_duration, country, year, 
                 raise ValueError(f"No idle_mode entries for field strength {field_strength}")
             idle_power = idle_mode_vals.mean()
         
-        # carbon_emissions = duration * scan_power * carbon_intensity
-        carbon_emissions = mri_consumption(idle_power, scan_power, duration)
+        carbon_emissions = carbon_intensity * mri_consumption(idle_power, scan_power, scan_duration, idle_duration)
 
         # COMPUTING-RELATED CALCULATIONS
         ################################
@@ -107,9 +109,11 @@ def compute_scan(modality, model, field_strength, scan_duration, country, year, 
             "country": country,
             "year": year,
             "carbon_intensity": carbon_intensity,
-            "duration": scan_duration,
+            "scan_duration": scan_duration,
+            "idle_duration": idle_duration,
             "carbon_emissions": carbon_emissions,
             "scan_power": scan_power,
+            "idle_power": idle_power,
             "computing_energy": computing_energy
         }
 
@@ -119,19 +123,24 @@ def compute_scan(modality, model, field_strength, scan_duration, country, year, 
 # Server function provides access to client-side input values
 def server(input):
     @render.text  
-    def consumption(scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename, modality = input.modality, model = input.model, manufacturer = input.manufacturer, field_strength = input.field_strength, scan_duration = input.scan_duration, country = input.country, year = input.year):
+    def consumption(scannerData_filename=scannerData_filename, 
+                    countryCarbonIntensity_filename=countryCarbonIntensity_filename,
+                    input=input):
+        
+        print("in consumption function")
+
         # Read inputs from Shiny input objects
-        modality = modality.get()
-        model = model.get()
-        manufacturer = manufacturer.get()
-        field_strength = float(field_strength.get())
-        scan_duration = float(scan_duration.get())
-        idle_duration = float(idle_duration.get())
-        country = country.get()
-        year = year.get()
+        modality = input.modality.get()
+        model = input.model.get()
+        field_strength = float(input.field_strength.get())
+        scan_duration = float(input.scan_duration.get())
+        idle_duration = float(input.idle_duration.get())
+        country = input.country.get()
+        year = input.year.get()
 
         try:
-            return get_statement(compute_scan(modality, model, field_strength, duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
+            print("in try loop")
+            return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
         except Exception as e:
             # Return an informative error string to the UI instead of raising
             return f"Error: {e}"
@@ -144,9 +153,9 @@ if __name__ == "__main__":
 
     ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
 
-    ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 45), 
+    ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
 
-    ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 45), 
+    ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
     
     ui.input_numeric("year", "Year of the scanning", date.today().year), 
 
@@ -162,7 +171,6 @@ if __name__ == "__main__":
         "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
     ),
 
-    
     ui.input_select(
         "model", "Model", choices=get_choices(scannerData_filename, "model_full", other=True)
     ),
