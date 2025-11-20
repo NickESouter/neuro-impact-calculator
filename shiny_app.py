@@ -1,17 +1,22 @@
 # from shared import df
 
+# Prerequisites
 from datetime import date
 from shiny import App, render, ui
 import pandas as pd
 
+<<<<<<< HEAD
 from utils.consumptions import mri_consumption, cooling_consumption
 
 
+=======
+# Path to data
+>>>>>>> e4687b4e839f2ceda59d8fe3d52607a3d83fd1ea
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
 scannerData_filename = "data/Scanner Power - Sheet3.csv"
 
+def get_choices(file_name, category, other = False):
 
-def get_choices(file_name, category, other=False):
     if file_name == scannerData_filename and category == "model_full":
         df_choices = load_scanner_data(scannerData_filename=scannerData_filename)
     else:
@@ -25,7 +30,7 @@ def get_choices(file_name, category, other=False):
 def load_scanner_data(scannerData_filename=scannerData_filename):
     df_models = pd.read_csv(scannerData_filename)
     df_models['model_full'] = df_models['Manufacturer'] + ", " + df_models['Model']
-    df_models.sort_values(by=['model_full'], inplace=True)
+    df_models.sort_values(by = ['model_full'], inplace = True)
 
     # Make sure field strength is a float
     df_models['Field strength'] = df_models['Field strength'].astype(float)
@@ -173,4 +178,3 @@ if __name__ == "__main__":
     app = App(app_ui, server)
 
     app.run()
-

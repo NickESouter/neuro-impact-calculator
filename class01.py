@@ -12,7 +12,7 @@ class acquisition():
         self.country  = country  # user-specified
         self.year     = year     # user-specified
 
-    def _get_consumption(self):
+    def get_consumption(self):
 
         df_carbon = pd.read_csv("data/carbon-intensity.csv")
         df_energy = pd.read_csv("data/Chodorowski_energy.csv")
@@ -35,5 +35,5 @@ if __name__ == "__main__":
     entity   = "SE DWIMVb1000s/mm2 2.0mm"
 
     a = acquisition("MRI", entity, duration, country, year)
-    w = a._get_consumption()
+    w = a.get_consumption()
     print(w)
