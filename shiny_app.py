@@ -4,14 +4,9 @@
 from datetime import date
 from shiny import App, render, ui
 import pandas as pd
-
-<<<<<<< HEAD
 from utils.consumptions import mri_consumption, cooling_consumption
 
-
-=======
-# Path to data
->>>>>>> e4687b4e839f2ceda59d8fe3d52607a3d83fd1ea
+# Paths to data
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
 scannerData_filename = "data/Scanner Power - Sheet3.csv"
 
@@ -112,7 +107,7 @@ def compute_scan(modality, model, field_strength, scan_duration, country, year, 
             "country": country,
             "year": year,
             "carbon_intensity": carbon_intensity,
-            "duration": duration,
+            "duration": scan_duration,
             "carbon_emissions": carbon_emissions,
             "scan_power": scan_power,
             "computing_energy": computing_energy
