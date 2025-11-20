@@ -1,4 +1,4 @@
-def mri_consumption(kw_idle, kw_scan, scan_time =60, idle_time = 15):
+def mri_consumption(kw_idle, kw_scan, scan_time = 60, idle_time = 15):
   """
   Calculates the energy consumption of an MRI scanner.
 
@@ -6,12 +6,12 @@ def mri_consumption(kw_idle, kw_scan, scan_time =60, idle_time = 15):
     kw_idle (float): Power consumption in kilowatts (kW) during idle mode.
     kw_scan (float): Power consumption in kilowatts (kW) during scan mode.
     scan_time (int, optional): Duration of the scan in minutes. Defaults to 60.
-    idle_time (int, optional): Duration of idle time in minutes. Defaults to 60.
+    idle_time (int, optional): Duration of idle time in minutes. Defaults to 15.
 
   Returns:
     float: Total energy consumption in kilowatt-hours (kWh).
   """
-  kwh = (scan_time*kw_scan)/60 + (idle_time*kw_idle)/60
+  kwh = (scan_time * kw_scan) / 60 + (idle_time * kw_idle) / 60
 
   return kwh
 
@@ -34,12 +34,12 @@ def cooling_consumption(mri_consumption, scan_time = 60):
   cop_t_amb = 3.0 - 0.05 * (20 - 15)
   h_load = 0.95 * mri_consumption
 
-  e_cool = h_load/cop_t_amb * scan_time/60
+  e_cool = h_load / cop_t_amb * scan_time / 60
 
 
   return e_cool
 
-def storage_consumption(scan_time=60, years_storage =5, redundancy = 3):
+def storage_consumption(scan_time = 60, years_storage = 5, redundancy = 3):
   """
   Calculates the energy consumption associated with data storage for MRI scans.
 
@@ -55,7 +55,7 @@ def storage_consumption(scan_time=60, years_storage =5, redundancy = 3):
   Returns:
     float: The estimated energy consumption for data storage in kilowatt-hours (kWh).
   """
-  volume_estimated = (scan_time/60)*5
+  volume_estimated = (scan_time / 60) * 5
   kwh = 0.0537 * volume_estimated * years_storage * redundancy
   #converting the estimation of 50kWh/TB/Year to GiB
   return kwh
