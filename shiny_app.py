@@ -243,7 +243,9 @@ app_ui = ui.page_fluid(
             ui.card(
                 ui.HTML(ui.output_ui("consumption"), ),
                 position="right"
-            )
+            ),
+
+            col_widths = (3, 9),
         )
     )
 
