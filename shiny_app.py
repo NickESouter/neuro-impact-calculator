@@ -47,7 +47,7 @@ def convert_g2kg(grams):
 
 def get_statement(summary):
     if summary["year"] != summary["year_eff"]:
-        year_text = f"We don't have data for {summary['year']} yet, so the estimation provided is computed based on the latest year available ({summary['year_eff']}) for the country selected, {summary['country']}.\n"
+        year_text = f"We don't have data for {summary['year']} yet, so the estimation provided is computed based on the closest year available ({summary['year_eff']}) for the country selected, {summary['country']}.\n"
     else:
         year_text = ""
     
@@ -72,10 +72,12 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
     # Country specific data
     df_carbon = pd.read_csv(countryCarbonIntensity_filename)
 
-    # If the year selected is not in the data we have for the selected country, take latest available year
+    # If the year selected is not in the data we have for the selected country, take closest available year
     if year not in df_carbon[df_carbon["Entity"] == country]["Year"].values:
         available_years = sorted(df_carbon[df_carbon["Entity"] == country]["Year"].unique())
-        year_eff = available_years[-1]
+        year_eff = available_years[-1] # (abs(available_years - year)).argmin()
+        available_years = df_carbon[df_carbon["Entity"] == country]["Year"].unique()
+        year_eff = available_years[(abs(available_years - year)).argmin()]
     else:
         year_eff = year
 
