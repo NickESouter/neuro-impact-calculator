@@ -154,7 +154,7 @@ def server(input, output, session):
         @render.image
         def logo():
             img_path = Path(__file__).parent / "V34.svg"
-            return {"src": str(img_path), "width": "100px"}
+            return {"src": str(img_path), "width": "300px"}
         @render.text  
         def consumption(scannerData_filename=scannerData_filename, 
                         countryCarbonIntensity_filename=countryCarbonIntensity_filename,
