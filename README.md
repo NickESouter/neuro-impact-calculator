@@ -90,7 +90,7 @@ This Python script contains functions used to:
 This Python script is used to run the calculator dashboard, using the shiny app package.
 Functions
 
-* Get choices. Displays choices for dropdown menues of data entry inputs by pooling unique values from data files.
+* Get choices. Displays choices for dropdown menus of data entry inputs by pooling unique values from data files.
 * Load scanner data. Loads data about scanner manufacturers, model, field strength, and energy consumption in kW. All data is linked to original sources.
 * compute_percents // work in progress
 * convert_g2kg // work in progress
