@@ -29,7 +29,6 @@ def get_choices(file_name, category, filter_cat=None, filter_val=None, other = F
 
     return choice_list
 
-
 def load_scanner_data(scannerData_filename=scannerData_filename):
     df_models = pd.read_csv(scannerData_filename)
     df_models['model_full'] = df_models['Manufacturer'] + " " + df_models['Model']
@@ -39,7 +38,6 @@ def load_scanner_data(scannerData_filename=scannerData_filename):
     df_models['Field strength'] = df_models['Field strength'].astype(float)
 
     return df_models
-
 
 def compute_percents(summary, transport_mode):
     # TODO: implement
@@ -143,30 +141,66 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
 
         return summary
 
+if __name__ == "__main__":
 
-# Server function provides access to client-side input values
-def server(input):
-    @render.text  
-    def consumption(scannerData_filename=scannerData_filename, 
-                    countryCarbonIntensity_filename=countryCarbonIntensity_filename,
-                    input=input):
-        
+    # User interface (UI) definition
+    app_ui = ui.page_fluid(
+        ui.layout_columns(
+            # Sidebar (left panel) for inputs
+            ui.card(
+                ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
+                ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
+                ui.input_numeric("sample_size", "Sample size", 1), 
+                ui.input_select(
+                    "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
+                ),
+                ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
+                ui.input_select(
+                    "modality", "Modality", choices=["MRI"]
+                ),
+                ui.input_select(
+                    "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
+                ),
+                ui.output_ui("model_ui"),
+                position="left"
+            ),
 
-        # Read inputs from Shiny input objects
-        modality = input.modality.get()
-        model = input.model.get()
-        field_strength = float(input.field_strength.get())
-        scan_duration = float(input.scan_duration.get())
-        idle_duration = float(input.idle_duration.get())
-        country = input.country.get()
-        year = input.year.get()
+            # Main panel (right) for output
+            ui.card(
+                ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
+                ui.output_text("consumption"),
+                position="right"
+            )
+        )
+    )
 
-        try:
-            return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
-        except Exception as e:
-            # Return an informative error string to the UI instead of raising
-            return f"Error: {e}"
+def server(input, output, session):
+        @render.ui
+        def model_ui():
+            field_strength = input.field_strength.get()
+            if field_strength is None or field_strength == "":
+                choices = get_choices(scannerData_filename, "model_full", other=True)
+            else:
+                choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
+            return ui.input_select("model", "Model", choices=choices)
 
+        @render.text  
+        def consumption(scannerData_filename=scannerData_filename, 
+                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
+                        input=input):
+            modality = input.modality.get()
+            model = input.model.get()
+            field_strength = float(input.field_strength.get())
+            sample_size = float(input.sample_size.get())
+            scan_duration = float(input.scan_duration.get()) * sample_size
+            idle_duration = float(input.idle_duration.get()) * sample_size
+            country = input.country.get()
+            year = input.year.get()
+
+            try:
+                return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
+            except Exception as e:
+                return f"Error: {e}"
 
 if __name__ == "__main__":
 
@@ -206,38 +240,6 @@ if __name__ == "__main__":
         ),
     )
 )
-
-    def server(input, output, session):
-        @render.ui
-        def model_ui():
-            field_strength = input.field_strength.get()
-            if field_strength is None or field_strength == "":
-                choices = get_choices(scannerData_filename, "model_full", other=True)
-            else:
-                choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
-            return ui.input_select("model", "Model", choices=choices)
-
-        @render.image  
-        def image():
-            img = {"src": here / "V34.svg", "width": "250px"}  
-            return img 
-
-        @render.text  
-        def consumption(scannerData_filename=scannerData_filename, 
-                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
-                        input=input):
-            modality = input.modality.get()
-            model = input.model.get()
-            field_strength = float(input.field_strength.get())
-            scan_duration = float(input.scan_duration.get())
-            idle_duration = float(input.idle_duration.get())
-            country = input.country.get()
-            year = input.year.get()
-
-            try:
-                return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
-            except Exception as e:
-                return f"Error: {e}"
 
     app = App(app_ui, server)
 

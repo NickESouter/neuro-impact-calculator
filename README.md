@@ -12,7 +12,12 @@ This online calculator is intended to provide an estimate of carbon dioxide (CO2
 * **Field strength** - The field strength of MRI scanning, currently includes 1.5T, 3T, and 7T
 * **Model** - The model of the MRI scanner used, including both the manufacturer and the specific model
 
+The resulting printed statement provides total energy usage (kWh) and carbon emissions (kg). This is contextualised using the following metrics:
+* Percent of a return flight from Paris to London. The metric used to do so was derived from the Travel Carbon Fotprint Calculator ([https://travel-footprint-calculator.irap.omp.eu/]).
+* Equivilant in both miles and km driven in a passenger car, using a conversion factor of 106.4 gCO2/km and 171 gCO2/mile, as taken from the 2023 value for ‘Average WLTP  CO2 emissions from new passenger cars' from [https://www.eea.europa.eu/en/analysis/indicators/co2-performance-of-new-passenger?activeAccordion=]
+
 The components used for this tool are explained in turn below.
+
 
 ## data
 
@@ -74,6 +79,15 @@ This Python script contains functions used to:
   * years_storage (int, optional): The number of years the data will be stored. Defaults to 5.
   * redundancy (int, optional): The redundancy factor for data storage (e.g., for backups).                 Defaults to 3.
 
+* Estimate computing energy consumption. This function estimates the energy consumption based on CPU hours, RAM usage, optional GPU hours, and a Power Usage Effectiveness (PUE) for High-Performance Computing (HPC). Arguments include:
+  * cpu_hours (float): Number of CPU hours used.
+  * ram_gb (float): Amount of RAM used in gigabytes.
+  * gpu_hours (float, optional): Number of GPU hours used. Defaults to 0.
+  * pue_hpc (float, optional): Power Usage Effectiveness for HPC data centers.                             Defaults to 1.56 (from Uptime Institute survey).
+
+## shiny_app.py
+
+This Python script is used to run the calculator dashboard, using the shiny app package.
 
 ## Running 
 ### Requirements
