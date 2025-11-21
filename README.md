@@ -100,7 +100,7 @@ Functions
   *  model: information about the company and the model of the machine
   *  field_strength: magnetic field strength in Tesla
   *  scan_duration: duration of active scanning in minutes
-  *  idle_duration: duration of minutes in 
+  *  idle_duration: time in between acquisitions when MRI is in idle mode (e.g.: rest or breaks)
   *  country: the location of where the data was collected
   *  year: information about the time at which the data was collected
   *  scannerData_filename: filename of the file with scanner-related specs
@@ -108,7 +108,7 @@ Functions
 
 ## Running 
 ### Requirements
-
+Prerequisites: datetime, pandas, pathlib
 pip install shiny
 
 \>\>\>  python shiny_app.py   
