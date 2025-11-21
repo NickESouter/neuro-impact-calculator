@@ -90,15 +90,12 @@ This Python script contains functions used to:
 This Python script is used to run the calculator dashboard, using the shiny app package.
 Functions
 
-* get_choices
-  Displays choices for dropdown menues of data entry inputs by pooling unique values from data files.
-* load_scanner_data
-  Loads data about scanner manufacturers, model, field strength, and energy consumption in kW. All data is linked to original sources.
+* Get choices. Displays choices for dropdown menues of data entry inputs by pooling unique values from data files.
+* Load scanner data. Loads data about scanner manufacturers, model, field strength, and energy consumption in kW. All data is linked to original sources.
 * compute_percents // work in progress
 * convert_g2kg // work in progress
-* get_statement
-  Prints the environmental impact statement.
-* compute_scan. Computes carbon emissions and computing energy given the input parameters. Outputs a summary of computed values for the statement.
+* Get statement. Prints the environmental impact statement.
+* Compute scan. Computes carbon emissions and computing energy given the input parameters. Outputs a summary of computed values for the statement. Arguments include:
   *  modality: MRI // (could add other modalities such as EEG or MEG)
   *  model: information about the company and the model of the machine
   *  field_strength: magnetic field strength in Tesla
