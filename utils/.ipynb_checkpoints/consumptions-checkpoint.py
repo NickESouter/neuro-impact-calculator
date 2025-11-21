@@ -34,7 +34,7 @@ def cooling_consumption(mri_consumption, scan_time = 60):
   cop_t_amb = 3.0 - 0.05 * (20 - 15)
   h_load = 0.95 * mri_consumption
 
-  e_cool = h_load / cop_t_amb * scan_time / 60
+  e_cool = h_load / cop_t_amb * scan_time
 
 
   return e_cool

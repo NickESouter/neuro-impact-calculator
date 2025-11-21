@@ -63,3 +63,13 @@ Souter et al. (2025) [https://doi.org/10.1162/IMAG.a.36] estimated the energy us
 * **kWh_per_minute** - The equivilant energy usage value for a minute of computing
 
 While this provides a good starting point, it would be preferable to be able to use an existing carbon tracking tool, like the Green Algorithms calculator [https://calculator.green-algorithms.org/], which provides flexibility on things like the specific processor used, and the power use effectiveness of the data centre. The benchmark data provided by Souter al. (2025) assumes the use of an Intel® Xeon® Processor E5-2640 v3, and a power use effectiveness value of 1.28. The data processed for this paper was approximatley 6 minutes of task fMRI data, at 2mm resolution.
+
+
+
+## Running 
+### Requirements
+
+pip install shiny
+
+>>> 
+
