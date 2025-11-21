@@ -142,28 +142,32 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
 
 
 # Server function provides access to client-side input values
-def server(input):
-    @render.text  
-    def consumption(scannerData_filename=scannerData_filename, 
-                    countryCarbonIntensity_filename=countryCarbonIntensity_filename,
-                    input=input):
-        
+def server(input, output, session):
+        @render.ui
+        def model_ui():
+            field_strength = input.field_strength.get()
+            if field_strength is None or field_strength == "":
+                choices = get_choices(scannerData_filename, "model_full", other=True)
+            else:
+                choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
+            return ui.input_select("model", "Model", choices=choices)
 
-        # Read inputs from Shiny input objects
-        modality = input.modality.get()
-        model = input.model.get()
-        field_strength = float(input.field_strength.get())
-        scan_duration = float(input.scan_duration.get())
-        idle_duration = float(input.idle_duration.get())
-        country = input.country.get()
-        year = input.year.get()
+        @render.text  
+        def consumption(scannerData_filename=scannerData_filename, 
+                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
+                        input=input):
+            modality = input.modality.get()
+            model = input.model.get()
+            field_strength = float(input.field_strength.get())
+            scan_duration = float(input.scan_duration.get())
+            idle_duration = float(input.idle_duration.get())
+            country = input.country.get()
+            year = input.year.get()
 
-        try:
-            return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
-        except Exception as e:
-            # Return an informative error string to the UI instead of raising
-            return f"Error: {e}"
-
+            try:
+                return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
+            except Exception as e:
+                return f"Error: {e}"
 
 if __name__ == "__main__":
 
@@ -196,33 +200,6 @@ if __name__ == "__main__":
             )
         )
     )
-
-    def server(input, output, session):
-        @render.ui
-        def model_ui():
-            field_strength = input.field_strength.get()
-            if field_strength is None or field_strength == "":
-                choices = get_choices(scannerData_filename, "model_full", other=True)
-            else:
-                choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
-            return ui.input_select("model", "Model", choices=choices)
-
-        @render.text  
-        def consumption(scannerData_filename=scannerData_filename, 
-                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
-                        input=input):
-            modality = input.modality.get()
-            model = input.model.get()
-            field_strength = float(input.field_strength.get())
-            scan_duration = float(input.scan_duration.get())
-            idle_duration = float(input.idle_duration.get())
-            country = input.country.get()
-            year = input.year.get()
-
-            try:
-                return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
-            except Exception as e:
-                return f"Error: {e}"
 
     app = App(app_ui, server)
 
