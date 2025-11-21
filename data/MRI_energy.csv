@@ -1,8 +1,0 @@
-kWh_per_minute,paper,url,scanner,notes
-0.263846154,McAlister et al. (2022),https://doi.org/10.1016/j.lanwpc.2022.100459,Not specified?,"From table 1, using 'Total power kWh' divided by 'Total time spent - hrs' for the row 'MRI Active', converted to minutes"
-0.773809524,Chodorowski et al. (2024),https://doi.org/10.1016/j.neurad.2023.12.001,3T Philips MR7700,"Derived from Figure 3, for sequence fMRI EPI 3mm"
-,Leapman et al. (2023),https://doi.org/10.1016/j.eururo.2022.12.008,Not specified?,"Unclear, only carbon emissions are reported. Possible to back calculate energy usage?"
-,Esmaeili et al. (2018),https://doi.org/10.1108/ijhcqa-10-2016-0153,Can't access,Unable to access full paper. Can see energy usage per scan but not scan duration
-,Martin et al. (2018),https://doi.org/10.1016/j.jacr.2018.07.015,Can't access,Unable to access full paper. Can see emissions but not duration or energy
-,Marwick and Buonocore (2011),https://doi.org/10.1136/hrt.2011.227884,Can't access,Can't access
-,Thiel et al. (2024),https://doi.org/10.1148/radiol.240398,Philips Ingenia Elition 3T,"Carbon emissions per scan is reported, but no hint to duration or carbon intensity factor"
