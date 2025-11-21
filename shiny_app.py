@@ -23,7 +23,7 @@ def get_choices(file_name, category, filter_cat=None, filter_val=None, other = F
     choice_list = df_choices[category].unique().tolist()
     if other:
         choice_list.append("Other")
-        
+
     return choice_list
 
 def load_scanner_data(scannerData_filename=scannerData_filename):
@@ -138,6 +138,7 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
 
         return summary
 
+<<<<<<< HEAD
 if __name__ == "__main__":
 
     # User interface (UI) definition
@@ -172,6 +173,11 @@ if __name__ == "__main__":
     )
 
     def server(input, output, session):
+=======
+
+# Server function provides access to client-side input values
+def server(input, output, session):
+>>>>>>> 07231e0764dd6d3462dd62c3bb0234a839ce31aa
         @render.ui
         def model_ui():
             field_strength = input.field_strength.get()
@@ -198,6 +204,38 @@ if __name__ == "__main__":
                 return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
             except Exception as e:
                 return f"Error: {e}"
+
+if __name__ == "__main__":
+
+    # User interface (UI) definition
+    app_ui = ui.page_fluid(
+        ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
+        ui.layout_columns(
+            # Sidebar (left panel) for inputs
+            ui.card(
+                ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
+                ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
+                ui.input_select(
+                    "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
+                ),
+                ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
+                ui.input_select(
+                    "modality", "Modality", choices=["MRI"]
+                ),
+                ui.input_select(
+                    "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
+                ),
+                ui.output_ui("model_ui"),
+                position="left"
+            ),
+
+            # Main panel (right) for output
+            ui.card(
+                ui.output_text("consumption"),
+                position="right"
+            )
+        )
+    )
 
     app = App(app_ui, server)
 
