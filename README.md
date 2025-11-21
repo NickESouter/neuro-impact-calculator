@@ -12,7 +12,12 @@ This online calculator is intended to provide an estimate of carbon dioxide (CO2
 * **Field strength** - The field strength of MRI scanning, currently includes 1.5T, 3T, and 7T
 * **Model** - The model of the MRI scanner used, including both the manufacturer and the specific model
 
+The resulting printed statement provides total energy usage (kWh) and carbon emissions (kg). This is contextualised using the following metrics:
+* Percent of a return flight from Paris to London. The metric used to do so was derived from the Travel Carbon Fotprint Calculator ([https://travel-footprint-calculator.irap.omp.eu/]).
+* Equivilant in both miles and km driven in a passenger car, using a conversion factor of 106.4 gCO2/km and 171 gCO2/mile, as taken from the 2023 value for ‘Average WLTP  CO2 emissions from new passenger cars' from [https://www.eea.europa.eu/en/analysis/indicators/co2-performance-of-new-passenger?activeAccordion=]
+
 The components used for this tool are explained in turn below.
+
 
 ## data
 
