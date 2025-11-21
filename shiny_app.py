@@ -112,7 +112,7 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
         # COMPUTING-RELATED CALCULATIONS
         ################################
 
-        computing_energy = computing_consumptio(cpu_hours, ram_gb, gpu_hours=2, pue_hpc)
+        computing_energy = computing_consumption(cpu_hours, ram_gb, gpu_hours=2, pue_hpc)
 
 
         # SUMMARY
