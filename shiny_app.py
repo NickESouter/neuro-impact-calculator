@@ -23,7 +23,7 @@ def get_choices(file_name, category, filter_cat=None, filter_val=None, other = F
     choice_list = df_choices[category].unique().tolist()
     if other:
         choice_list.append("Other")
-        
+
     return choice_list
 
 
@@ -169,6 +169,7 @@ if __name__ == "__main__":
 
     # User interface (UI) definition
     app_ui = ui.page_fluid(
+        ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
         ui.layout_columns(
             # Sidebar (left panel) for inputs
             ui.card(
@@ -190,7 +191,6 @@ if __name__ == "__main__":
 
             # Main panel (right) for output
             ui.card(
-                ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
                 ui.output_text("consumption"),
                 position="right"
             )
