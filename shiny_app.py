@@ -8,10 +8,9 @@ from utils.consumptions import mri_consumption, cooling_consumption, computing_c
 from pathlib import Path
 
 # Paths to data
-countryCarbonIntensity_filename = "data/carbon-intensity.csv"
-scannerData_filename = "data/Scanner Power - Main.csv"
 here = Path(__file__).parent
-
+countryCarbonIntensity_filename = here / "data/carbon-intensity.csv" 
+scannerData_filename = here / "data/Scanner Power - Main.csv"
 
 def get_choices(file_name, category, filter_cat=None, filter_val=None, other = False):
 
@@ -212,10 +211,8 @@ def server(input, output, session):
         except Exception as e:
             return ui.HTML(f"<em>Error: {e}</em>")
 
-if __name__ == "__main__":
-
-    # User interface (UI) definition
-    app_ui = ui.page_fluid(
+# User interface (UI) definition
+app_ui = ui.page_fluid(
         ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
         
         ui.tags.div(
@@ -250,5 +247,7 @@ if __name__ == "__main__":
         )
     )
 
-    app = App(app_ui, server)
+app = App(app_ui, server)
+
+if __name__ == "__main__":
     app.run()
