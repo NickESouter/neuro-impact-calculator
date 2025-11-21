@@ -10,15 +10,20 @@ from utils.consumptions import mri_consumption, cooling_consumption, computing_c
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
 scannerData_filename = "data/Scanner Power - Main.csv"
 
-def get_choices(file_name, category, other = False):
+def get_choices(file_name, category, filter_cat=None, filter_val=None, other = False):
 
     if file_name == scannerData_filename and category == "model_full":
         df_choices = load_scanner_data(scannerData_filename=scannerData_filename)
     else:
         df_choices = pd.read_csv(file_name)
+
+    if filter_cat is not None and filter_val is not None:
+        df_choices = df_choices[df_choices[filter_cat] == filter_val]
+
     choice_list = df_choices[category].unique().tolist()
     if other:
         choice_list.append("Other")
+        
     return choice_list
 
 
