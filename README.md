@@ -50,43 +50,29 @@ This file contains power consumption factors for varying models of MRI field str
 * **scan_mode** - As the field above, but adjusted as needed. This is only relevant when a range of values have been provided by the manufacturer. In such cases, the average of the minimum and maximum value is taken.
 * **Source** - A URL reflecting where this information has been extracted
 
-Currently, the data in this file has been taken from environmental declarations and poduct specifications provided for the respective model by manufacturers.
+Currently, the data in this file has been taken from environmental declarations and poduct specifications provided for the respective model by manufacturers. The estmations derived using this method may be more applicable to clinical scanning than research scanning.
 
-### MRI_energy.csv
+## utils
 
-This file contains energy usage (kWh) per minute metrics for MRI scanning, as taken from multiple papers. The aim of this resource was to allow for flexible estimations of energy usage based on the specific scanner in use, in light of data provided across studies. Note, however, that this resource is largely incomplete. Papers discussing the energy usage of MRI rarely provide sufficient data, including (a) duraiton of MRI scanning and (b) energy usage for a given scan (kWh). Additionally, several of the papers listed here are not open access, meaning metrics cannot be extracted. Ultimately, it may be wise to disregard this file and instead use the csv file discussed below.
+### consumptions.py
 
-That said, this file contains the following columns:
+This Python script contains functions used to:
 
-* **kWh_per_minute** - kWh needed for active MRI scanning per minute
-* **paper** - Name of the paper from which this metric has been taken
-* **url** - DOI links for each paper referenced
-* **scanner** - The specific MRI scanner used to derive the metric
-* **notes** - Context on how the estimated was derived from the respective paper, or comments on why this metric could not be accessed.
+* Estimate MRI energy consumption. Arguments contain:
+  * kw_idle (float): Power consumption in kilowatts (kW) during idle mode.
+  * kw_scan (float): Power consumption in kilowatts (kW) during scan mode.
+  * scan_time (int, optional): Duration of the scan in minutes. Defaults to 60.
+  * idle_time (int, optional): Duration of idle time in minutes. Defaults to 15.
+  This returns an estimate of energy usage of active and idle scanning time combined, converted to kWh
 
-### Chodorowski_energy.csv
-
-Chodorowski et al. (2024) [https://doi.org/10.1016/j.neurad.2023.12.001] provides a useful resource with which to estimate energy usage of MRI scanning. For scanning on a a 3T Philips MR7700 scanner, this paper provides (a) duration of scanning and (b) energy usage (kWh) per scan for both and fMRI EPI sequence and several variants of DWI sequences. From this, hourly energy usage of MRI scanning can be inferred. This may therefore be an ideal resource with which to estimate the energy usage of MRI scanning, although it lacks comparable data for structural scanning (T1/T2). This file contains the following columns:
-
-* **sequence** - The scanning sequence for which energy usage was measured.
-* **duration_seconds** - The duration of the respective scan, in seconds as provided in the paper
-* **duration_minutes** - This same duration metric converted to minutes
-* **kWh** - The energy usage in kWh of the respective scanning sequence
-* **kWh_per_minute** - The equivilant energy usage value for a minute of scanning
-
-### Souter_energy.csv
-
-Souter et al. (2025) [https://doi.org/10.1162/IMAG.a.36] estimated the energy usage of fMRI data processing in software pipelines FSL, SPM, and fMRIPrep. This file contains data from this paper, including:
-
-* **software** - The software for which the estimate is provided
-* **stage** - Either preprocessing or analysis
-* **duration_seconds** - The duration of computing in seconds
-* **duration_minutes** - The same duration metric converted to minutes
-* **kWh** - The energy needed for this computing
-* **kWh_per_minute** - The equivilant energy usage value for a minute of computing
-
-While this provides a good starting point, it would be preferable to be able to use an existing carbon tracking tool, like the Green Algorithms calculator [https://calculator.green-algorithms.org/], which provides flexibility on things like the specific processor used, and the power use effectiveness of the data centre. The benchmark data provided by Souter al. (2025) assumes the use of an Intel® Xeon® Processor E5-2640 v3, and a power use effectiveness value of 1.28. The data processed for this paper was approximatley 6 minutes of task fMRI data, at 2mm resolution.
-
+* Estimate scanner cooling energy consumption. This function models the cooling energy based on the MRI machine's energy consumption and a simplified Coefficient of Performance (COP) for cooling systems. Arguments include:
+  * mri_consumption (float): The energy consumption of the MRI machine in kWh.
+  * scan_time (int, optional): The duration of the MRI scan in minutes. Defaults to 60.
+    
+* Estimate data storage energy consumption. This function estimates storage consumption based on estimated data volume, a given energy density for storage, years of storage, and a redundancy factor. Arguments include:
+  * scan_time (int, optional): The duration of the MRI scan in minutes. Defaults to 60.
+  * years_storage (int, optional): The number of years the data will be stored. Defaults to 5.
+  * redundancy (int, optional): The redundancy factor for data storage (e.g., for backups).                 Defaults to 3.
 
 
 ## Running 
