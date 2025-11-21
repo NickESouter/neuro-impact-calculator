@@ -8,7 +8,7 @@ from utils.consumptions import mri_consumption, cooling_consumption, computing_c
 
 # Paths to data
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
-scannerData_filename = "data/Scanner Power - Sheet3.csv"
+scannerData_filename = "data/Scanner Power - Main.csv"
 
 def get_choices(file_name, category, other = False):
 
@@ -164,33 +164,60 @@ if __name__ == "__main__":
 
     # User interface (UI) definition
     app_ui = ui.page_fluid(
+        ui.layout_columns(
+            # Sidebar (left panel) for inputs
+            ui.card(
+                ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
+                ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
+                ui.input_select(
+                    "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
+                ),
+                ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
+                ui.input_select(
+                    "modality", "Modality", choices=["MRI"]
+                ),
+                ui.input_select(
+                    "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
+                ),
+                ui.output_ui("model_ui"),
+                position="left"
+            ),
 
-    ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
-
-    ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
-
-    ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
-    
-    ui.input_select(
-        "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
-    ),
-
-    ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
-
-    ui.input_select(
-        "modality", "Modality", choices=["MRI"]
-    ),
-
-    ui.input_select(
-        "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
-    ),
-
-    ui.input_select(
-        "model", "Model", choices=get_choices(scannerData_filename, "model_full", other=True)
-    ),
-
-    ui.output_text("consumption"),
+            # Main panel (right) for output
+            ui.card(
+                ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
+                ui.output_text("consumption"),
+                position="right"
+            )
+        )
     )
+
+    def server(input, output, session):
+        @render.ui
+        def model_ui():
+            field_strength = input.field_strength.get()
+            if field_strength is None or field_strength == "":
+                choices = get_choices(scannerData_filename, "model_full", other=True)
+            else:
+                choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
+            return ui.input_select("model", "Model", choices=choices)
+
+        @render.text  
+        def consumption(scannerData_filename=scannerData_filename, 
+                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
+                        input=input):
+            modality = input.modality.get()
+            model = input.model.get()
+            field_strength = float(input.field_strength.get())
+            scan_duration = float(input.scan_duration.get())
+            idle_duration = float(input.idle_duration.get())
+            country = input.country.get()
+            year = input.year.get()
+
+            try:
+                return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
+            except Exception as e:
+                return f"Error: {e}"
 
     app = App(app_ui, server)
 
