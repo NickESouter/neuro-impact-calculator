@@ -74,6 +74,15 @@ This Python script contains functions used to:
   * years_storage (int, optional): The number of years the data will be stored. Defaults to 5.
   * redundancy (int, optional): The redundancy factor for data storage (e.g., for backups).                 Defaults to 3.
 
+* Estimate computing energy consumption. This function estimates the energy consumption based on CPU hours, RAM usage, optional GPU hours, and a Power Usage Effectiveness (PUE) for High-Performance Computing (HPC). Arguments include:
+  * cpu_hours (float): Number of CPU hours used.
+  * ram_gb (float): Amount of RAM used in gigabytes.
+  * gpu_hours (float, optional): Number of GPU hours used. Defaults to 0.
+  * pue_hpc (float, optional): Power Usage Effectiveness for HPC data centers.                             Defaults to 1.56 (from Uptime Institute survey).
+
+## shiny_app.py
+
+This Python script is used to run the calculator dashboard, using the shiny app package.
 
 ## Running 
 ### Requirements
