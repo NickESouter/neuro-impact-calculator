@@ -4,7 +4,7 @@
 from datetime import date
 from shiny import App, render, ui
 import pandas as pd
-from utils.consumptions import mri_consumption, cooling_consumption
+from utils.consumptions import mri_consumption, cooling_consumption, omputing_consumption, storage_consumption
 
 # Paths to data
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
@@ -24,7 +24,7 @@ def get_choices(file_name, category, other = False):
 
 def load_scanner_data(scannerData_filename=scannerData_filename):
     df_models = pd.read_csv(scannerData_filename)
-    df_models['model_full'] = df_models['Manufacturer'] + ", " + df_models['Model']
+    df_models['model_full'] = df_models['Manufacturer'] + " " + df_models['Model']
     df_models.sort_values(by = ['model_full'], inplace = True)
 
     # Make sure field strength is a float
@@ -37,21 +37,26 @@ def compute_percents(summary, transport_mode):
     # TODO: implement
     return 0
 
-def get_computing_energy():
-    # TODO: implement
-
-    return 0
-
 def convert_g2kg(grams):
     return grams / 1000.0
 
 def get_statement(summary):
-    text = (
-        f"For the current study, {summary['scan_power']:.2f} kWh was used for MRI scanning for a duration of active scanning of {summary['scan_duration']} minutes "
-        f"and an additional {summary['idle_power']:.2f} kWh for idle scanning for a duration of {summary['idle_duration']} minutes, "
-        f"and {summary['computing_energy']:.2f} kWh for data processing and analysis. "
-        f"In {summary['country']}, with a carbon intensity value of {summary['carbon_intensity']:.2f} grams of carbon dioxide per kWh (gCO2/kWh), "
-        f"this amounted to {convert_g2kg(summary['carbon_emissions']):.2f} kilograms of carbon dioxide-equivalent emissions. "
+    if summary["year"] != summary["year_eff"]:
+        year_text = f"We don't have data for {summary['year']} yet, so the estimation provided is computed based on the closest year available ({summary['year_eff']}) for the country selected, {summary['country']}.\n"
+    else:
+        year_text = ""
+    
+    if summary["model"] == "Other":
+        model_text = f"The value provided below is computed as the median for {summary['field_strength']:.1f}T MRI models in our database.\n"
+    else:
+        model_text = f"You have selected the {summary['model']} model.\n"
+
+    text = year_text + model_text + (
+        f"For the current study, {summary['scan_power']:.2f} kWh was used for MRI scanning for a duration of active scanning of {summary['scan_duration']:.0f} minutes "
+        f"and an additional {summary['idle_power']:.2f} kWh for idle scanning for a duration of {summary['idle_duration']:.0f} minutes, "
+        f"and {summary['computing_energy']:.2f} kWh for data processing and analysis.\n"
+        f"In {summary['country']} in {summary['year_eff']}, with a carbon intensity value of {summary['carbon_intensity']:.2f} grams of carbon dioxide per kWh (gCO2/kWh), "
+        f"this amounted to {convert_g2kg(summary['carbon_emissions']):.2f} kilograms of carbon dioxide-equivalent emissions.\n"
         f"This is equivalent to {compute_percents(summary, 'flight'):.2f}% of a return flight from London to Paris, "
         f"{compute_percents(summary, 'car'):.2f}% miles driven in a passenger car."
     )
@@ -59,14 +64,22 @@ def get_statement(summary):
 
 def compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename):
     
-    print("are we hereeeee???")
-
     # Country specific data
     df_carbon = pd.read_csv(countryCarbonIntensity_filename)
-    mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year)
+
+    # If the year selected is not in the data we have for the selected country, take closest available year
+    if year not in df_carbon[df_carbon["Entity"] == country]["Year"].values:
+        available_years = sorted(df_carbon[df_carbon["Entity"] == country]["Year"].unique())
+        year_eff = available_years[-1] # (abs(available_years - year)).argmin()
+        available_years = df_carbon[df_carbon["Entity"] == country]["Year"].unique()
+        year_eff = available_years[(abs(available_years - year)).argmin()]
+    else:
+        year_eff = year
+
+    mask = (df_carbon["Entity"] == country) & (df_carbon["Year"] == year_eff)
 
     if not mask.any():
-        raise ValueError(f"No carbon intensity data for {country} in {year}") 
+        raise ValueError(f"No carbon intensity data for {country} in {year_eff}") # TODO: We won't have such a case now
     
     else:
         carbon_intensity = df_carbon.loc[mask, "Carbon intensity of electricity - gCO2/kWh"].iloc[0] # TODO: check that
@@ -87,19 +100,19 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
             scan_mode_vals = df_energy.loc[df_energy["Field strength"] == field_strength, "scan_mode"].dropna()
             if scan_mode_vals.empty:
                 raise ValueError(f"No scan_mode entries for field strength {field_strength}")
-            scan_power = scan_mode_vals.mean()
+            scan_power = scan_mode_vals.median() # More robust than the mean given observed data 
 
             idle_mode_vals = df_energy.loc[df_energy["Field strength"] == field_strength, "idle_mode"].dropna()
             if idle_mode_vals.empty:
                 raise ValueError(f"No idle_mode entries for field strength {field_strength}")
-            idle_power = idle_mode_vals.mean()
+            idle_power = idle_mode_vals.median() # More robust than the mean given observed data
         
         carbon_emissions = carbon_intensity * mri_consumption(idle_power, scan_power, scan_duration, idle_duration)
 
         # COMPUTING-RELATED CALCULATIONS
         ################################
 
-        computing_energy = get_computing_energy() # TODO: decide to keep, and if yes, implement
+        computing_energy = computing_consumptio(cpu_hours, ram_gb, gpu_hours=2, pue_hpc)
 
 
         # SUMMARY
@@ -108,6 +121,9 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
         summary = {
             "country": country,
             "year": year,
+            "year_eff": year_eff,
+            "model": model,
+            "field_strength": field_strength,
             "carbon_intensity": carbon_intensity,
             "scan_duration": scan_duration,
             "idle_duration": idle_duration,
@@ -127,7 +143,6 @@ def server(input):
                     countryCarbonIntensity_filename=countryCarbonIntensity_filename,
                     input=input):
         
-        print("in consumption function")
 
         # Read inputs from Shiny input objects
         modality = input.modality.get()
@@ -139,7 +154,6 @@ def server(input):
         year = input.year.get()
 
         try:
-            print("in try loop")
             return get_statement(compute_scan(modality, model, field_strength, scan_duration, idle_duration, country, year, scannerData_filename=scannerData_filename, countryCarbonIntensity_filename=countryCarbonIntensity_filename))
         except Exception as e:
             # Return an informative error string to the UI instead of raising
@@ -157,11 +171,11 @@ if __name__ == "__main__":
 
     ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
     
-    ui.input_numeric("year", "Year of the scanning", date.today().year), 
-
     ui.input_select(
         "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
     ),
+
+    ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
 
     ui.input_select(
         "modality", "Modality", choices=["MRI"]
