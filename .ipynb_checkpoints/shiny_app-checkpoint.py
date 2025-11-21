@@ -4,7 +4,7 @@
 from datetime import date
 from shiny import App, render, ui
 import pandas as pd
-from utils.consumptions import mri_consumption, cooling_consumption, omputing_consumption, storage_consumption
+from utils.consumptions import mri_consumption, cooling_consumption, computing_consumption, storage_consumption
 
 # Paths to data
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
@@ -112,7 +112,7 @@ def compute_scan(modality, model, field_strength, scan_duration, idle_duration, 
         # COMPUTING-RELATED CALCULATIONS
         ################################
 
-        computing_energy = computing_consumption(cpu_hours, ram_gb, gpu_hours=2, pue_hpc)
+        computing_energy = computing_consumption(cpu_hours=2, ram_gb=32, gpu_hours=0, pue_hpc = 1.56)
 
 
         # SUMMARY

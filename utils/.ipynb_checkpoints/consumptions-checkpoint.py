@@ -60,7 +60,7 @@ def storage_consumption(scan_time = 60, years_storage = 5, redundancy = 3):
   #converting the estimation of 50kWh/TB/Year to GiB
   return kwh
 
-def computing_consumption(cpu_hours, ram_gb, gpu_hours=0, pue_hpc = 1.56):
+def computing_consumption(cpu_hours=2, ram_gb=32, gpu_hours=0, pue_hpc = 1.56):
   """
   Calculates the energy consumption of computing resources.
 

@@ -12,7 +12,9 @@ This online calculator is intended to provide an estimate of carbon dioxide (CO2
 * **Field strength** - The field strength of MRI scanning, currently includes 1.5T, 3T, and 7T
 * **Model** - The model of the MRI scanner used, including both the manufacturer and the specific model
 
-## Data
+The components used for this tool are explained in turn below.
+
+## data
 
 This folder contains input data for running the tool.
 
@@ -31,7 +33,24 @@ Source: Ember (2025), Energy Institute - Statistical Review of World Energy (202
 
 It was edited such that carbon intensity factors for entities larger than countries (e.g., Asia, Africa, the EU) were removed.
 
-This data allows for country-specific carbon footprint estimates, whereby energy usage in kWh can be multiplied by the respective conversion factor.
+This data allows for country-specific carbon footprint estimates, whereby energy usage in kWh can be multiplied by the respective conversion factor to produce an estimate of carbon emissions
+
+### Scanner Power - Sheet3.csv
+
+This file contains power consumption factors for varying models of MRI field strengths and model types. This includes:
+
+* **Manufacturer** - The manufacturer of the MRI scanner used (Siemens, GE, Philips, and Canon)
+* **Field strength** - The field strength of the MRI scanner used (1.5T, 3T, 7T)
+* **Model** - The specific model of scanner used
+* **Off mode (kW)** - The power consumer by the scanner when in 'off' mode. Currently not used in calculations
+* **Standby (no scan) mode (kW)** - Reported kW while the scanner is in standby mode
+* **Ready-to-scan mode (kW)** - Reported kW while the scanner is in a ready to scan state, not actively collecting data
+* **idle_mode** - A kW value for the scanner while not actively collecting data. A separate column has been made for this given that manufacturers variably provide data for the two above fields, and the real term difference between them is not always clear. When one value is provided, this is taken to be idle scanning power. When values are provided for both of the above fields, they are averaged to produce this estimate
+* **Scan mode (kW)** - Reported kW during active MRI scanning of patients
+* **scan_mode** - As the field above, but adjusted as needed. This is only relevant when a range of values have been provided by the manufacturer. In such cases, the average of the minimum and maximum value is taken.
+* **Source** - A URL reflecting where this information has been extracted
+
+Currently, the data in this file has been taken from environmental declarations and poduct specifications provided for the respective model by manufacturers.
 
 ### MRI_energy.csv
 
