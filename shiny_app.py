@@ -76,13 +76,13 @@ def get_statement(summary):
     if summary["model"] == "Other":
         parts.append(f"<p><em>The value provided below is computed as the median for {summary['field_strength']:.1f}T MRI models in our database.</em></p>")
     else:
-        parts.append(f"<p><em>You have selected the {summary['model']} model.</em></p>")
+        parts.append(f"<p>You have selected the {summary['model']} model.</p>")
 
     parts.append(f"<p>For the current study, <strong>{summary['scan_power']:.2f} kWh</strong> was used for MRI scanning <strong>{summary['sample_size']}</strong> subjects for a duration of active scanning of <strong>{summary['scan_duration']:.0f} minutes</strong> per subject,<br>"
                  f"and an additional <strong>{summary['idle_power']:.2f} kWh</strong> for idle scanning for a duration of <strong>{summary['idle_duration']:.0f} minutes</strong> per subject,<br>"
                  f"and <strong>{summary['computing_energy']:.2f} kWh</strong> for data processing and analysis.</p>")
 
-    parts.append(f"<p>In <strong>{summary['country']}</strong> in <strong>{summary['year_eff']}</strong>, with a carbon intensity value of <strong>{summary['carbon_intensity']:.2f} grams</strong> of carbon dioxide per kWh (gCO2/kWh),<br>"
+    parts.append(f"<p>In <strong>{summary['country']}</strong> in <strong>{summary['year_eff']}</strong>, with a carbon intensity value of <strong>{summary['carbon_intensity']:.2f} grams</strong> of carbon dioxide per kWh (gCO2/kWh),"
                  f"this amounted to <strong>{convert_g2kg(summary['carbon_emissions']):.2f} kilograms</strong> of carbon dioxide-equivalent emissions.</p>")
 
     parts.append(f"<p>This is equivalent to <strong>{summary['transports_data']['flight_percent']:.2f}%</strong> of a <strong>{summary['transports_data']['flight_type']}</strong>,"
@@ -186,22 +186,12 @@ def server(input, output, session):
             choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
         return ui.input_select("model", "Model", choices=choices)
 
-        @render.image
-        def logo():
-            img_path = Path(__file__).parent / "V34.svg"
-            return {"src": str(img_path), "width": "300px"}
-        @render.text  
-        def consumption(scannerData_filename=scannerData_filename, 
-                        countryCarbonIntensity_filename=countryCarbonIntensity_filename,
-                        input=input):
-            modality = input.modality.get()
-            model = input.model.get()
-            field_strength = float(input.field_strength.get())
-            sample_size = float(input.sample_size.get())
-            scan_duration = float(input.scan_duration.get()) * sample_size
-            idle_duration = float(input.idle_duration.get()) * sample_size
-            country = input.country.get()
-            year = input.year.get()
+    @render.image
+    def logo():
+        img_path = Path(__file__).parent / "V34.svg"
+        return {"src": str(img_path), "width": "300px"}
+
+
     @render.ui
     def consumption(scannerData_filename=scannerData_filename, 
                     countryCarbonIntensity_filename=countryCarbonIntensity_filename,
