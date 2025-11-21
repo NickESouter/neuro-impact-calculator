@@ -246,7 +246,9 @@ if __name__ == "__main__":
             ui.card(
                 ui.HTML(ui.output_ui("consumption"), ),
                 position="right"
-            )
+            ),
+
+            col_widths = (3, 9),
         )
     )
 
