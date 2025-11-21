@@ -5,10 +5,13 @@ from datetime import date
 from shiny import App, render, ui
 import pandas as pd
 from utils.consumptions import mri_consumption, cooling_consumption, computing_consumption, storage_consumption
+from pathlib import Path
 
 # Paths to data
 countryCarbonIntensity_filename = "data/carbon-intensity.csv"
 scannerData_filename = "data/Scanner Power - Main.csv"
+here = Path(__file__).parent
+
 
 def get_choices(file_name, category, filter_cat=None, filter_val=None, other = False):
 
@@ -169,33 +172,40 @@ if __name__ == "__main__":
 
     # User interface (UI) definition
     app_ui = ui.page_fluid(
-        ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
-        ui.layout_columns(
-            # Sidebar (left panel) for inputs
-            ui.card(
-                ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
-                ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
-                ui.input_select(
-                    "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
-                ),
-                ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
-                ui.input_select(
-                    "modality", "Modality", choices=["MRI"]
-                ),
-                ui.input_select(
-                    "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
-                ),
-                ui.output_ui("model_ui"),
-                position="left"
+    ui.panel_title(ui.h2("Neuro Impact Calculator", class_="pt-5")),
+    
+    # Logo in corner
+    ui.tags.div(
+        ui.output_image("image"),
+        style="position: absolute; top: 100px; left: 400px; z-index: 1000;"
+    ),
+    
+    ui.layout_columns(
+        # Sidebar (left panel) for inputs
+        ui.card(
+            ui.input_numeric("scan_duration", "Duration of active scanning (in minutes)", 60), 
+            ui.input_numeric("idle_duration", "Duration of idle scanning (in minutes)", 15), 
+            ui.input_select(
+                "country", "Country", choices=get_choices("data/carbon-intensity.csv", "Entity")
             ),
+            ui.input_numeric("year", "Year of the scanning", date.today().year-1, max=date.today().year, min=2000), 
+            ui.input_select(
+                "modality", "Modality", choices=["MRI"]
+            ),
+            ui.input_select(
+                "field_strength", "Field strength", choices=get_choices(scannerData_filename, "Field strength")
+            ),
+            ui.output_ui("model_ui"),
+            position="left"
+        ),
 
-            # Main panel (right) for output
-            ui.card(
-                ui.output_text("consumption"),
-                position="right"
-            )
-        )
+        # Main panel (right) for output
+        ui.card(
+            ui.output_text("consumption"),
+            position="right"
+        ),
     )
+)
 
     def server(input, output, session):
         @render.ui
@@ -206,6 +216,11 @@ if __name__ == "__main__":
             else:
                 choices = get_choices(scannerData_filename, "model_full", filter_cat="Field strength", filter_val=float(field_strength), other=True)
             return ui.input_select("model", "Model", choices=choices)
+
+        @render.image  
+        def image():
+            img = {"src": here / "V34.svg", "width": "250px"}  
+            return img 
 
         @render.text  
         def consumption(scannerData_filename=scannerData_filename, 
