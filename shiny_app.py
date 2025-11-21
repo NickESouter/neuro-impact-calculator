@@ -24,7 +24,7 @@ def get_choices(file_name, category, other = False):
 
 def load_scanner_data(scannerData_filename=scannerData_filename):
     df_models = pd.read_csv(scannerData_filename)
-    df_models['model_full'] = df_models['Manufacturer'] + ", " + df_models['Model']
+    df_models['model_full'] = df_models['Manufacturer'] + " " + df_models['Model']
     df_models.sort_values(by = ['model_full'], inplace = True)
 
     # Make sure field strength is a float
