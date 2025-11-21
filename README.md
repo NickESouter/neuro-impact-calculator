@@ -1,12 +1,16 @@
 # Neuro Impact Calculator
 
-This repository will form the basis for an upcoming Brainhack Donostia 2025 project.
-
 The actions we take as neuroimaging researchers, including conference travel, data collection, and even data preprocessing and storage, have a carbon footprint and therefore contribute to the climate crisis. Increasingly, funding bodies expect researchers to estimate the environmental impacts of proposed projects, and to take steps where possible to reduce them. There is an absence of tools which allow researchers to estimate their footprint across an entire project. Given that it frequently requires substantial energy to collect data, and results in large datasets and computationally expensive pipelines, human neuroimaging is an ideal discipline for such a tool.
 
-This project will focus on workshopping, building, and disseminating a single platform which will allow neuroimaging researchers to estimate the environmental impact of their research, based on factors including imaging modality, length of data collection, and analysis software choice. Such a tool could be used prospectively during grant writing, or retrospectively during manuscript writing to provide a ‘sustainability statement’.
+This online calculator is intended to provide an estimate of carbon dioxide (CO2) emissions for MRI scanning. Based on provided input information (see below), it generates an 'Environmental impact statement' which can be pasted into grant applications (rephrased to be prospective) or into a publication after the completion of a study. The tool can be accessed through the following URL (<LINK>). In short, the tool requires the following information as input:
 
-This tool will at the very least allow estimation of the carbon footprint of MRI scanning, and fMRI data analysis. Project members will be encouraged to bring insight from their own experience and data to allow expansion of the tool to other modalities, such as EEG, MEG, or PET. Ultimately, this will result in a ready to use open-source tool, in the form of either a Python package or a webpage with an online calculator. This tool will generate a paragraph of text for users which can then be inserted as an environmental impact statement into a grant application or manuscript.
+* **Duration of active scanning (in minutes)** - The time spent actively collecting MRI data, with a participant in the scanner. Here, include the cumulative length of all scans run. Set at a default of 60 minutes
+* **Duration of idle scanning (in minutes)** - The time during your allocated slot during which the scanner was not actively collecting data (e.g., setting up for scanning, putting the participant in the scanner). Set at a default of 15 minutes
+* **Year of the scanning** - The year in which data was collected. In some cases, carbon intensity data for the respective combination of year and country may not be available. In such a case, the carbon intensity value for the nearest available year will be used
+* **Country** - The country in which scanning was performed
+* **Modality** - The neuroimaging modality used. At present, this is limited to MRI scanning. Future iterations may be expanded to include other modalities (EEG, MEG, CT)
+* **Field strength** - The field strength of MRI scanning, currently includes 1.5T, 3T, and 7T
+* **Model** - The model of the MRI scanner used, including both the manufacturer and the specific model
 
 ## Data
 
