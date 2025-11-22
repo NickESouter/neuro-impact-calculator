@@ -40,7 +40,7 @@ It was edited such that carbon intensity factors for entities larger than countr
 
 This data allows for country-specific carbon footprint estimates, whereby energy usage in kWh can be multiplied by the respective conversion factor to produce an estimate of carbon emissions
 
-### Scanner Power - Sheet3.csv
+### Scanner Power - Main.csv
 
 This file contains power consumption factors for varying models of MRI field strengths and model types. This includes:
 
